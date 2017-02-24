@@ -59,8 +59,7 @@ namespace Test
         public void TestChangeTypeOfExistingField()
         {
             var b = GetBuilder("class C { int f; }");
-            var c = b.Members[0] as TypeBuilder;
-            var f = b.GetBuilders(DeclarationKind.Field, "f").First() as FieldBuilder;
+            var f = b.GetBuilders<FieldBuilder>("f").First();
             f.Type = b.Generator.IdentifierName("T");
             b.Format();
 
@@ -71,8 +70,7 @@ namespace Test
         public void TestChangeNameOfExistingField()
         {
             var b = GetBuilder("class C { int f; }");
-            var c = b.Members[0] as TypeBuilder;
-            var f = b.GetBuilders(DeclarationKind.Field, "f").First() as FieldBuilder;
+            var f = b.GetBuilders<FieldBuilder>("f").First();
             f.Name = "f2";
             b.Format();
 
@@ -83,8 +81,7 @@ namespace Test
         public void TestChangeInitializerOfExistingField()
         {
             var b = GetBuilder("class C { int f; }");
-            var c = b.Members[0] as TypeBuilder;
-            var f = b.GetBuilders(DeclarationKind.Field, "f").First() as FieldBuilder;
+            var f = b.GetBuilders<FieldBuilder>("f").First();
             f.Initializer = SyntaxFactory.ParseExpression("123");
             b.Format();
 
@@ -96,7 +93,7 @@ namespace Test
         {
             var b = GetBuilder("class C { int f; }");
             var c = b.Members[0] as TypeBuilder;
-            var f = b.GetBuilders(DeclarationKind.Field, "f").First() as FieldBuilder;
+            var f = b.GetBuilders<FieldBuilder>("f").First();
             f.Accessibility = Accessibility.Public;
             b.Format();
 
@@ -124,7 +121,7 @@ namespace Test
         public void TestAddParameterInExistingMethod()
         {
             var b = GetBuilder("class C { void M() { } }");
-            var m = b.GetBuilders(DeclarationKind.Method, "M").First() as MethodBuilder;
+            var m = b.GetBuilders<MethodBuilder>("M").First();
             m.AddParameter("p", b.Generator.TypeExpression(SpecialType.System_Int32));
             b.Format();
 
@@ -135,7 +132,7 @@ namespace Test
         public void TestChangeReturnTypeOfExistingMethod()
         {
             var b = GetBuilder("class C { void M() { } }");
-            var m = b.GetBuilders(DeclarationKind.Method, "M").First() as MethodBuilder;
+            var m = b.GetBuilders<MethodBuilder>("M").First();
             m.ReturnType = b.Generator.TypeExpression(SpecialType.System_Int32);
             b.Format();
 
@@ -146,7 +143,7 @@ namespace Test
         public void TestChangeAccessibilityOfExistingMethod()
         {
             var b = GetBuilder("class C { void M() { } }");
-            var m = b.GetBuilders(DeclarationKind.Method, "M").First() as MethodBuilder;
+            var m = b.GetBuilders<MethodBuilder>("M").First();
             m.Accessibility = Accessibility.Public;
             b.Format();
 
@@ -157,7 +154,7 @@ namespace Test
         public void TestChangeNameOfExistingMethod()
         {
             var b = GetBuilder("class C { void M() { } }");
-            var m = b.GetBuilders(DeclarationKind.Method, "M").First() as MethodBuilder;
+            var m = b.GetBuilders<MethodBuilder>("M").First();
             m.Name = "M2";
             b.Format();
 
@@ -168,7 +165,7 @@ namespace Test
         public void TestChangeNameOfExistingParameter()
         {
             var b = GetBuilder("class C { void M(int p) { } }");
-            var p = b.GetBuilders(DeclarationKind.Parameter, "p").First() as ParameterBuilder;
+            var p = b.GetBuilders<ParameterBuilder>("p").First();
             p.Name = "p2";
             b.Format();
 
@@ -179,7 +176,7 @@ namespace Test
         public void TestChangeTypeOfExistingParameter()
         {
             var b = GetBuilder("class C { void M(int p) { } }");
-            var p = b.GetBuilders(DeclarationKind.Parameter, "p").First() as ParameterBuilder;
+            var p = b.GetBuilders<ParameterBuilder>("p").First();
             p.Type = b.Generator.TypeExpression(SpecialType.System_String);
             b.Format();
 
@@ -190,7 +187,7 @@ namespace Test
         public void TestChangeDefaultOfExistingParameter()
         {
             var b = GetBuilder("class C { void M(int p) { } }");
-            var p = b.GetBuilders(DeclarationKind.Parameter, "p").First() as ParameterBuilder;
+            var p = b.GetBuilders<ParameterBuilder>("p").First();
             p.Default = SyntaxFactory.ParseExpression("123");
             b.Format();
 

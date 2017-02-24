@@ -239,11 +239,21 @@ namespace Builders
         /// <summary>
         /// Get all the builders for the specified <see cref="DeclarationKind"/> and name.
         /// </summary>
-        public IEnumerable<SyntaxBuilder> GetBuilders(DeclarationKind kind, string name)
+        public IEnumerable<SyntaxBuilder> GetBuilders(DeclarationKind kind, string name = null)
         {
             return from n in CurrentNode.DescendantNodesAndSelf()
-                   where Generator.GetDeclarationKind(n) == kind && string.Equals(name, Generator.GetName(n))
+                   where Generator.GetDeclarationKind(n) == kind && (name == null || string.Equals(name, Generator.GetName(n)))
                    select GetBuilder(n.Span);
+        }
+
+        /// <summary>
+        /// Get all the builders for the specific builder type and name.
+        /// </summary>
+        public IEnumerable<TBuilder> GetBuilders<TBuilder>(string name = null) where TBuilder : SyntaxBuilder
+        {
+            return from n in CurrentNode.DescendantNodesAndSelf()
+                   where GetBuilderType(Generator.GetDeclarationKind(n)) == typeof(TBuilder) && (name == null || string.Equals(name, Generator.GetName(n)))
+                   select (TBuilder)GetBuilder(n.Span);
         }
 
         /// <summary>
@@ -487,6 +497,54 @@ namespace Builders
                 case DeclarationKind.Variable:
                 default:
                     throw new NotImplementedException();
+            }
+        }
+
+        private static Type GetBuilderType(DeclarationKind kind)
+        {
+            switch (kind)
+            {
+                case DeclarationKind.CompilationUnit:
+                    return typeof(CompilationUnitBuilder);
+                case DeclarationKind.Namespace:
+                    return typeof(NamespaceBuilder);
+                case DeclarationKind.NamespaceImport:
+                    return typeof(NamespaceImportBuilder);
+                case DeclarationKind.Class:
+                case DeclarationKind.Interface:
+                case DeclarationKind.Struct:
+                case DeclarationKind.Enum:
+                    return typeof(TypeBuilder);
+                case DeclarationKind.Method:
+                case DeclarationKind.Constructor:
+                case DeclarationKind.Destructor:
+                case DeclarationKind.Operator:
+                case DeclarationKind.ConversionOperator:
+                    return typeof(MethodBuilder);
+                case DeclarationKind.Field:
+                case DeclarationKind.EnumMember:
+                case DeclarationKind.Event:
+                    return typeof(FieldBuilder);
+                case DeclarationKind.Attribute:
+                    return typeof(AttributeBuilder);
+                case DeclarationKind.Parameter:
+                    return typeof(ParameterBuilder);
+                case DeclarationKind.Property:
+                case DeclarationKind.Indexer:
+                case DeclarationKind.CustomEvent:
+                    return typeof(PropertyBuilder);
+                case DeclarationKind.AddAccessor:
+                case DeclarationKind.RaiseAccessor:
+                case DeclarationKind.RemoveAccessor:
+                case DeclarationKind.SetAccessor:
+                case DeclarationKind.GetAccessor:
+                    return typeof(AccessorBuilder);
+                case DeclarationKind.Delegate:
+                    return typeof(DelegateBuilder);
+                case DeclarationKind.LambdaExpression:
+                case DeclarationKind.Variable:
+                default:
+                    return null;
             }
         }
         #endregion
