@@ -21,10 +21,10 @@ namespace Builders
             set { UpdateCurrentNode(Generator.WithType(CurrentNode, value)); }
         }
 
-        public string Default
+        public SyntaxNode Default
         {
-            get { return Generator.GetExpression(CurrentNode)?.ToString() ?? ""; }
-            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, SyntaxFactory.ParseExpression(value, consumeFullText: true))); }
+            get { return Generator.GetExpression(CurrentNode); }
+            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, value)); }
         }
     }
 }

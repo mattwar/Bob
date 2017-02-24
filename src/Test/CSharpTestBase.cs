@@ -6,7 +6,7 @@ using Builders;
 
 namespace Test
 {
-    public abstract class TestBase
+    public abstract class CSharpTestBase
     {
         private readonly Workspace _workspace = new AdhocWorkspace();
 
