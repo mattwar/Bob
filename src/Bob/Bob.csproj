@@ -179,8 +179,6 @@
     <Compile Include="Comments\Comment.cs" />
     <Compile Include="Comments\CommentStyle.cs" />
     <Compile Include="Comments\CSharpCommentEditor.cs" />
-    <Compile Include="CSharpSyntaxParser.cs" />
-    <Compile Include="SyntaxParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Comments\CommentEditor.cs" />
     <Compile Include="Builders\SyntaxBuilder.cs" />

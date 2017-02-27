@@ -9,8 +9,7 @@ namespace Test
 {
     public abstract class CSharpTestBase
     {
-        private static readonly MefHostServices _services = MefHostServices.Create(MefHostServices.DefaultAssemblies.Add(typeof(SyntaxBuilder).Assembly));
-        private static readonly Workspace _workspace = new AdhocWorkspace(_services);
+        private static readonly Workspace _workspace = new AdhocWorkspace();
 
         protected CompilationUnitBuilder GetBuilder(string code = "")
         {
