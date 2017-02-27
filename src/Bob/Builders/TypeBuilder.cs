@@ -50,9 +50,9 @@ namespace Builders
             return (MethodBuilder)AddMember(Generator.MethodDeclaration(name));
         }
 
-        public PropertyBuilder AddProperty(string name, SyntaxNode type)
+        public PropertyBuilder AddProperty(string name, TypeExpression type)
         {
-            return (PropertyBuilder)AddMember(Generator.PropertyDeclaration(name, type));
+            return (PropertyBuilder)AddMember(Generator.PropertyDeclaration(name, type.ToSyntaxNode(Context)));
         }
 
         public PropertyBuilder AddIndexer(SyntaxNode type)
@@ -60,19 +60,19 @@ namespace Builders
             return (PropertyBuilder)AddMember(Generator.IndexerDeclaration(Array.Empty<SyntaxNode>(), type));
         }
 
-        public FieldBuilder AddEvent(string name, SyntaxNode type)
+        public FieldBuilder AddEvent(string name, TypeExpression type)
         {
-            return (FieldBuilder)AddMember(Generator.EventDeclaration(name, type));
+            return (FieldBuilder)AddMember(Generator.EventDeclaration(name, type.ToSyntaxNode(Context)));
         }
 
-        public PropertyBuilder AddCustomEvent(string name, SyntaxNode type)
+        public PropertyBuilder AddCustomEvent(string name, TypeExpression type)
         {
-            return (PropertyBuilder)AddMember(Generator.CustomEventDeclaration(name, type));
+            return (PropertyBuilder)AddMember(Generator.CustomEventDeclaration(name, type.ToSyntaxNode(Context)));
         }
 
-        public FieldBuilder AddField(string name, SyntaxNode type)
+        public FieldBuilder AddField(string name, TypeExpression type)
         {
-            return (FieldBuilder)AddMember(Generator.FieldDeclaration(name, type));
+            return (FieldBuilder)AddMember(Generator.FieldDeclaration(name, type.ToSyntaxNode(Context)));
         }
 
         public FieldBuilder AddField(string name)
@@ -80,9 +80,9 @@ namespace Builders
             return AddField(name, Generator.TypeExpression(SpecialType.System_Int32));
         }
 
-        public FieldBuilder AddEnumMember(string name, SyntaxNode value = null)
+        public FieldBuilder AddEnumMember(string name, Expression value = default(Expression))
         {
-            return (FieldBuilder)AddMember(Generator.EnumMember(name, value));
+            return (FieldBuilder)AddMember(Generator.EnumMember(name, value.ToSyntaxNode(Context)));
         }
     }
 }

@@ -15,16 +15,16 @@ namespace Builders
         {
         }
 
-        public SyntaxNode Type
+        public TypeExpression Type
         {
             get { return Generator.GetType(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value)); }
+            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value.ToSyntaxNode(Context))); }
         }
 
-        public SyntaxNode Default
+        public Expression Default
         {
             get { return Generator.GetExpression(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, value)); }
+            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, value.ToSyntaxNode(Context))); }
         }
     }
 }

@@ -22,47 +22,6 @@ namespace Builders
         private SyntaxBuilder _parent;
         private BuilderContext _context;
 
-        internal class BuilderContext
-        {
-            private readonly Workspace _workspace;
-            private readonly SyntaxGenerator _generator;
-            private readonly SyntaxNode _originalRoot;
-            private SyntaxNode _currentRoot;
-
-            public BuilderContext(Workspace workspace, SyntaxNode root)
-            {
-                _workspace = workspace;
-                _generator = SyntaxGenerator.GetGenerator(workspace, root.Language);
-                _originalRoot = root;
-                _currentRoot = root;
-            }
-
-            public Workspace Workspace => _workspace;
-            public SyntaxGenerator Generator => _generator;
-            public SyntaxNode OriginalRoot => _originalRoot;
-            public SyntaxNode CurrentRoot => _currentRoot;
-
-            public void Replace(SyntaxNode currentNode, SyntaxNode newNode)
-            {
-                _currentRoot = _currentRoot.ReplaceNode(currentNode, newNode);
-            }
-
-            public void TrackNodes(IEnumerable<SyntaxNode> currentNodes)
-            {
-                _currentRoot = _currentRoot.TrackNodes(currentNodes);
-            }
-
-            public void RemoveNode(SyntaxNode currentNode)
-            {
-                _currentRoot = _generator.RemoveNode(_currentRoot, currentNode);
-            }
-
-            public void InsertAfter(SyntaxNode existingNode, SyntaxNode newNode)
-            {
-                _currentRoot = _generator.InsertNodesAfter(_currentRoot, existingNode, new[] { newNode });
-            }
-        }
-
         internal SyntaxBuilder(SyntaxBuilder parent, SyntaxNode node)
         {
             Debug.Assert(parent != null);
@@ -96,7 +55,7 @@ namespace Builders
         /// </summary>
         public SyntaxBuilder Parent => _parent;
 
-        private BuilderContext Context
+        internal BuilderContext Context
         {
             get
             {
@@ -371,34 +330,34 @@ namespace Builders
             return new MethodBuilder(new BuilderContext(Context.Workspace, Generator.MethodDeclaration(name)));
         }
 
-        public ParameterBuilder CreateParameter(string name, SyntaxNode type = null)
+        public ParameterBuilder CreateParameter(string name, TypeExpression type = default(TypeExpression))
         {
-            return new ParameterBuilder(new BuilderContext(Context.Workspace, Generator.ParameterDeclaration(name, type)));
+            return new ParameterBuilder(new BuilderContext(Context.Workspace, Generator.ParameterDeclaration(name, type.ToSyntaxNode(Context))));
         }
 
-        public FieldBuilder CreateField(string name, SyntaxNode type)
+        public FieldBuilder CreateField(string name, TypeExpression type)
         {
-            return new FieldBuilder(new BuilderContext(Context.Workspace, Generator.FieldDeclaration(name, type)));
+            return new FieldBuilder(new BuilderContext(Context.Workspace, Generator.FieldDeclaration(name, type.ToSyntaxNode(Context))));
         }
 
-        public PropertyBuilder CreateProperty(string name, SyntaxNode type)
+        public PropertyBuilder CreateProperty(string name, TypeExpression type)
         {
-            return new PropertyBuilder(new BuilderContext(Context.Workspace, Generator.PropertyDeclaration(name, type)));
+            return new PropertyBuilder(new BuilderContext(Context.Workspace, Generator.PropertyDeclaration(name, type.ToSyntaxNode(Context))));
         }
 
-        public PropertyBuilder CreateIndexer(SyntaxNode type)
+        public PropertyBuilder CreateIndexer(TypeExpression type)
         {
-            return new PropertyBuilder(new BuilderContext(Context.Workspace, Generator.IndexerDeclaration(null, type)));
+            return new PropertyBuilder(new BuilderContext(Context.Workspace, Generator.IndexerDeclaration(null, type.ToSyntaxNode(Context))));
         }
 
-        public FieldBuilder CreateEvent(string name, SyntaxNode type)
+        public FieldBuilder CreateEvent(string name, TypeExpression type)
         {
-            return new FieldBuilder(new BuilderContext(Context.Workspace, Generator.EventDeclaration(name, type)));
+            return new FieldBuilder(new BuilderContext(Context.Workspace, Generator.EventDeclaration(name, type.ToSyntaxNode(Context))));
         }
 
-        public PropertyBuilder CreateCustomEvent(string name, SyntaxNode type)
+        public PropertyBuilder CreateCustomEvent(string name, TypeExpression type)
         {
-            return new PropertyBuilder(new BuilderContext(Context.Workspace, Generator.CustomEventDeclaration(name, type)));
+            return new PropertyBuilder(new BuilderContext(Context.Workspace, Generator.CustomEventDeclaration(name, type.ToSyntaxNode(Context))));
         }
 
         internal static SyntaxBuilder CreateChild(SyntaxBuilder parent, SyntaxNode node)

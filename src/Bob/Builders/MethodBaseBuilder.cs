@@ -35,9 +35,9 @@ namespace Builders
             }
         }
 
-        public ParameterBuilder AddParameter(string name, SyntaxNode type = null)
+        public ParameterBuilder AddParameter(string name, TypeExpression type = default(TypeExpression))
         {
-            return AddParameter(Generator.ParameterDeclaration(name, type));
+            return AddParameter(Generator.ParameterDeclaration(name, type.ToSyntaxNode(Context)));
         }
 
         public ParameterBuilder AddParameter(SyntaxNode parameterNode)

@@ -163,6 +163,7 @@
   <ItemGroup>
     <Compile Include="CSharpBuilderTests.cs" />
     <Compile Include="CSharpCommentTests.cs" />
+    <Compile Include="CSharpExpressionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharpTestBase.cs" />
   </ItemGroup>

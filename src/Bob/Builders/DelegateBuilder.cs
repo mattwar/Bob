@@ -14,10 +14,10 @@ namespace Builders
         {
         }
 
-        public SyntaxNode ReturnType
+        public TypeExpression ReturnType
         {
             get { return Generator.GetType(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value)); }
+            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value.ToSyntaxNode(Context))); }
         }
     }
 }

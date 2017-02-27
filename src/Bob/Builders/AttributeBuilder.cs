@@ -42,14 +42,14 @@ namespace Builders
             }
         }
 
-        public AttributeArgumentBuilder AddArgument(SyntaxNode expression)
+        public AttributeArgumentBuilder AddArgument(Expression expression)
         {
-            return AddArgumentNode(Generator.AttributeArgument(expression));
+            return AddArgumentNode(Generator.AttributeArgument(expression.ToSyntaxNode(Context)));
         }
 
-        public AttributeArgumentBuilder AddArgument(string name, SyntaxNode expression)
+        public AttributeArgumentBuilder AddArgument(string name, Expression expression)
         {
-            return AddArgumentNode(Generator.AttributeArgument(name, expression));
+            return AddArgumentNode(Generator.AttributeArgument(name, expression.ToSyntaxNode(Context)));
         }
 
         private AttributeArgumentBuilder AddArgumentNode(SyntaxNode argumentNode)

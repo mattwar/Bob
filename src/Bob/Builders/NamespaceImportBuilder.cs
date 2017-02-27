@@ -20,10 +20,10 @@ namespace Builders
             set { UpdateCurrentNode(Generator.WithName(CurrentNode, value)); }
         }
 
-        public SyntaxNode Type
+        public TypeExpression Type
         {
             get { return Generator.GetType(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value)); }
+            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value.ToSyntaxNode(Context))); }
         }
     }
 }

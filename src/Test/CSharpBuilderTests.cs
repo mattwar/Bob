@@ -1,7 +1,5 @@
 ﻿using Builders;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Editing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
@@ -44,7 +42,7 @@ namespace Test
             var b = GetBuilder("class C { }");
             var c = b.Members[0] as TypeBuilder;
             var f = c.AddField("f", b.Generator.TypeExpression(SpecialType.System_Int32));
-            f.Initializer = SyntaxFactory.ParseExpression("123");
+            f.Initializer = 123;
             f.Accessibility = Accessibility.Private;
             b.Format();
 
@@ -60,10 +58,10 @@ namespace Test
         {
             var b = GetBuilder("class C { int f; }");
             var f = b.GetBuilders<FieldBuilder>("f").First();
-            f.Type = b.Generator.IdentifierName("T");
+            f.Type = typeof(string);
             b.Format();
 
-            Assert.AreEqual(@"class C { T f; }", b.CurrentNode.ToFullString());
+            Assert.AreEqual(@"class C { string f; }", b.CurrentNode.ToFullString());
         }
 
         [TestMethod]
@@ -82,7 +80,7 @@ namespace Test
         {
             var b = GetBuilder("class C { int f; }");
             var f = b.GetBuilders<FieldBuilder>("f").First();
-            f.Initializer = SyntaxFactory.ParseExpression("123");
+            f.Initializer = 123;
             b.Format();
 
             Assert.AreEqual(@"class C { int f = 123; }", b.CurrentNode.ToFullString());
@@ -177,7 +175,7 @@ namespace Test
         {
             var b = GetBuilder("class C { void M(int p) { } }");
             var p = b.GetBuilders<ParameterBuilder>("p").First();
-            p.Type = b.Generator.TypeExpression(SpecialType.System_String);
+            p.Type = typeof(string);
             b.Format();
 
             Assert.AreEqual(@"class C { void M(string p) { } }", b.CurrentNode.ToFullString());
@@ -188,7 +186,7 @@ namespace Test
         {
             var b = GetBuilder("class C { void M(int p) { } }");
             var p = b.GetBuilders<ParameterBuilder>("p").First();
-            p.Default = SyntaxFactory.ParseExpression("123");
+            p.Default = 123;
             b.Format();
 
             Assert.AreEqual(@"class C { void M(int p = 123) { } }", b.CurrentNode.ToFullString());

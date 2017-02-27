@@ -15,10 +15,10 @@ namespace Builders
         {
         }
 
-        public SyntaxNode ReturnType
+        public TypeExpression ReturnType
         {
             get { return Generator.GetType(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value)); }
+            set { UpdateCurrentNode(Generator.WithType(CurrentNode, value.ToSyntaxNode(Context))); }
         }
 
         public IReadOnlyList<SyntaxNode> Statements
@@ -27,10 +27,10 @@ namespace Builders
             set { UpdateCurrentNode(Generator.WithStatements(CurrentNode, value)); }
         }
 
-        public SyntaxNode Expression
+        public Expression Expression
         {
             get { return Generator.GetExpression(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, value)); }
+            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, value.ToSyntaxNode(Context))); }
         }
     }
 }

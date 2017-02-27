@@ -15,10 +15,10 @@ namespace Builders
             set { UpdateCurrentNode(Generator.WithName(CurrentNode, value)); }
         }
 
-        public SyntaxNode Expression
+        public Expression Expression
         {
             get { return Generator.GetExpression(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, value)); }
+            set { UpdateCurrentNode(Generator.WithExpression(CurrentNode, value.ToSyntaxNode(Context))); }
         }
     }
 }
