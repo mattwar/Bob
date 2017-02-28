@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Builders
 {
@@ -16,6 +17,8 @@ namespace Builders
             : base(context)
         {
         }
+
+        public TypeParameterList TypeParameters => TypeParameterList.GetList(this);
 
         public IEnumerable<MethodBuilder> Methods => Members.OfType<MethodBuilder>();
         public IEnumerable<FieldBuilder> Fields => Members.OfType<FieldBuilder>();

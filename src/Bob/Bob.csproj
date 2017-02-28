@@ -171,6 +171,8 @@
     <Compile Include="Builders\NamespaceBuilder.cs" />
     <Compile Include="Builders\NamespaceImportBuilder.cs" />
     <Compile Include="Builders\NamespaceMemberBuilder.cs" />
+    <Compile Include="Builders\StatementList.cs" />
+    <Compile Include="Builders\TypeParameterList.cs" />
     <Compile Include="Expression.cs" />
     <Compile Include="Builders\ParameterBuilder.cs" />
     <Compile Include="Builders\PropertyBuilder.cs" />

@@ -97,6 +97,11 @@ namespace Builders
         public SyntaxGenerator Generator => Context.Generator;
 
         /// <summary>
+        /// The <see cref="CommentEditor"/> this builder uses.
+        /// </summary>
+        internal CommentEditor CommentEditor => Context.CommentEditor;
+
+        /// <summary>
         /// The kind of declaration this builder's <see cref="SyntaxNode"/> corresponds to.
         /// </summary>
         public DeclarationKind Kind => Generator.GetDeclarationKind(CurrentNode);
@@ -169,13 +174,12 @@ namespace Builders
             TrackNodes(new[] { insertedNode });
 
             // prove that we can find the node again
-            System.Diagnostics.Debug.Assert(Context.CurrentRoot.GetCurrentNode(insertedNode) != null);
+            Debug.Assert(Context.CurrentRoot.GetCurrentNode(insertedNode) != null);
 
             return insertedNode;
         }
 
         internal virtual IEnumerable<SyntaxBuilder> Children => this.Members;
-
 
         private CommentBuilderList _leadingComments;
 

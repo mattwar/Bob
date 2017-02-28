@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace Builders
 {
@@ -426,5 +428,134 @@ namespace Builders
             return true;
         }
         #endregion
+
+
+        public override IReadOnlyList<string> GetTypeParameterNames(SyntaxNode node)
+        {
+            switch (node)
+            {
+                case TypeDeclarationSyntax td:
+                    return GetTypeParameterNames(td.TypeParameterList);
+
+                case MethodDeclarationSyntax md:
+                    return GetTypeParameterNames(md.TypeParameterList);
+
+                case DelegateDeclarationSyntax dd:
+                    return GetTypeParameterNames(dd.TypeParameterList);
+
+                default:
+                    return Array.Empty<string>();
+            }
+        }
+
+        private IReadOnlyList<string> GetTypeParameterNames(TypeParameterListSyntax list)
+        {
+            return list?.Parameters.Select(p => p.Identifier.Text).ToArray() ?? Array.Empty<string>();
+        }
+
+        public override IReadOnlyList<SyntaxNode> GetTypeConstraints(SyntaxNode node, string typeParameterName)
+        {
+            switch (node)
+            {
+                case TypeDeclarationSyntax td:
+                    return GetTypeConstraints(td.ConstraintClauses, typeParameterName);
+
+                case MethodDeclarationSyntax md:
+                    return GetTypeConstraints(md.ConstraintClauses, typeParameterName);
+
+                case DelegateDeclarationSyntax dd:
+                    return GetTypeConstraints(dd.ConstraintClauses, typeParameterName);
+
+                default:
+                    return Array.Empty<SyntaxNode>();
+            }
+        }
+
+        private IReadOnlyList<SyntaxNode> GetTypeConstraints(SyntaxList<TypeParameterConstraintClauseSyntax> clauses, string name)
+        {
+            return clauses.Where(cc => cc.Name.Identifier.Text == name).SelectMany(c => c.Constraints).OfType<TypeConstraintSyntax>().Select(c => c.Type).ToArray() ?? Array.Empty<SyntaxNode>();
+        }
+
+        public override SpecialTypeConstraintKind GetSpecialTypeConstraints(SyntaxNode node, string typeParameterName)
+        {
+            switch (node)
+            {
+                case TypeDeclarationSyntax td:
+                    return GetSpecialTypeConstraints(td.ConstraintClauses, typeParameterName);
+
+                case MethodDeclarationSyntax md:
+                    return GetSpecialTypeConstraints(md.ConstraintClauses, typeParameterName);
+
+                case DelegateDeclarationSyntax dd:
+                    return GetSpecialTypeConstraints(dd.ConstraintClauses, typeParameterName);
+
+                default:
+                    return SpecialTypeConstraintKind.None;
+            }
+        }
+
+        private SpecialTypeConstraintKind GetSpecialTypeConstraints(SyntaxList<TypeParameterConstraintClauseSyntax> clauses, string name)
+        {
+            var kind = SpecialTypeConstraintKind.None;
+            foreach (var constraint in clauses.Where(cc => cc.Name.Identifier.Text == name).SelectMany(c => c.Constraints))
+            {
+                switch (constraint.Kind())
+                {
+                    case SyntaxKind.ClassConstraint:
+                        kind |= SpecialTypeConstraintKind.ReferenceType;
+                        break;
+                    case SyntaxKind.StructConstraint:
+                        kind |= SpecialTypeConstraintKind.ValueType;
+                        break;
+                    case SyntaxKind.ConstructorConstraint:
+                        kind |= SpecialTypeConstraintKind.Constructor;
+                        break;
+                }
+            }
+
+            return kind;
+        }
+
+        public override SyntaxNode WithTypeParameterNameChanged(SyntaxNode node, string typeParameterName, string newTypeParameterName)
+        {
+            var nodesToChange = GetTypeParameterDeclarationNodes(node, typeParameterName);
+            return node.ReplaceNodes(nodesToChange, (o, r) => RenameNode(r, newTypeParameterName));
+        }
+
+        private IEnumerable<SyntaxNode> GetTypeParameterDeclarationNodes(SyntaxNode node, string typeParameterName)
+        {
+            switch (node)
+            {
+                case TypeDeclarationSyntax td:
+                    return td.TypeParameterList.Parameters.Where(p => p.Identifier.Text == typeParameterName).Cast<SyntaxNode>()
+                        .Concat(td.ConstraintClauses.Where(cc => cc.Name.Identifier.Text == typeParameterName));
+
+                case MethodDeclarationSyntax md:
+                    return md.TypeParameterList.Parameters.Where(p => p.Identifier.Text == typeParameterName).Cast<SyntaxNode>()
+                        .Concat(md.ConstraintClauses.Where(cc => cc.Name.Identifier.Text == typeParameterName));
+
+                case DelegateDeclarationSyntax dd:
+                    return dd.TypeParameterList.Parameters.Where(p => p.Identifier.Text == typeParameterName).Cast<SyntaxNode>()
+                        .Concat(dd.ConstraintClauses.Where(cc => cc.Name.Identifier.Text == typeParameterName));
+
+                default:
+                    return Array.Empty<SyntaxNode>();
+            }
+        }
+
+        private static SyntaxNode RenameNode(SyntaxNode node, string newName)
+        {
+            switch (node)
+            {
+                case TypeParameterSyntax tp:
+                    return tp.WithIdentifier(SyntaxFactory.Identifier(newName).WithTriviaFrom(tp.Identifier));
+
+                case TypeParameterConstraintClauseSyntax cc:
+                    return cc.WithName(SyntaxFactory.IdentifierName(newName).WithTriviaFrom(cc.Name));
+
+                default:
+                    return node;
+            }
+        }
     }
 }

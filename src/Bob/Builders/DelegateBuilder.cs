@@ -1,4 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Builders
 {
@@ -13,6 +16,8 @@ namespace Builders
             : base(context)
         {
         }
+
+        public TypeParameterList TypeParameters => TypeParameterList.GetList(this);
 
         public TypeExpression ReturnType
         {

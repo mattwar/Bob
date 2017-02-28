@@ -9,6 +9,7 @@ namespace Builders
     {
         private readonly Workspace _workspace;
         private readonly SyntaxGenerator _generator;
+        private readonly CommentEditor _commentEditor;
         private readonly SyntaxNode _originalRoot;
         private SyntaxNode _currentRoot;
 
@@ -16,12 +17,14 @@ namespace Builders
         {
             _workspace = workspace;
             _generator = SyntaxGenerator.GetGenerator(workspace, root.Language);
+            _commentEditor = CommentEditor.GetEditor(workspace, root.Language);
             _originalRoot = root;
             _currentRoot = root;
         }
 
         public Workspace Workspace => _workspace;
         public SyntaxGenerator Generator => _generator;
+        public CommentEditor CommentEditor => _commentEditor;
         public SyntaxNode OriginalRoot => _originalRoot;
         public SyntaxNode CurrentRoot => _currentRoot;
 

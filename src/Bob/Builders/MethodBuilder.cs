@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace Builders
 {
@@ -15,17 +17,15 @@ namespace Builders
         {
         }
 
+        public TypeParameterList TypeParameters => TypeParameterList.GetList(this);
+
         public TypeExpression ReturnType
         {
             get { return Generator.GetType(CurrentNode); }
             set { UpdateCurrentNode(Generator.WithType(CurrentNode, value.ToSyntaxNode(Context))); }
         }
 
-        public IReadOnlyList<SyntaxNode> Statements
-        {
-            get { return Generator.GetStatements(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithStatements(CurrentNode, value)); }
-        }
+        public StatementList Statements => StatementList.GetList(this);
 
         public Expression Expression
         {

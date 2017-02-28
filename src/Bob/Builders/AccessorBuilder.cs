@@ -22,10 +22,6 @@ namespace Builders
             set { UpdateCurrentNode(Generator.WithModifiers(CurrentNode, value)); }
         }
 
-        public IReadOnlyList<SyntaxNode> Statements
-        {
-            get { return Generator.GetStatements(CurrentNode); }
-            set { UpdateCurrentNode(Generator.WithStatements(CurrentNode, value)); }
-        }
+        public StatementList Statements => StatementList.GetList(this);
     }
 }

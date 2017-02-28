@@ -17,7 +17,7 @@ namespace Builders
         }
 
         internal SyntaxBuilder NodeBuilder => _nodeBuilder;
-        internal CommentEditor Editor => CommentEditor.GetEditor(_nodeBuilder.Workspace, _nodeBuilder.CurrentNode.Language);
+        internal CommentEditor Editor => _nodeBuilder.CommentEditor;
 
         public CommentBuilder AddComment(string comment, CommentStyle style = CommentStyle.SingleLineBlock)
         {
