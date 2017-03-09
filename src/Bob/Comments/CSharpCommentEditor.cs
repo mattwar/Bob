@@ -139,8 +139,9 @@ namespace Builders
             switch (trivia[span.Start].Kind())
             {
                 case SyntaxKind.SingleLineCommentTrivia:
-                case SyntaxKind.MultiLineCommentTrivia:
                     return CommentStyle.SingleLineBlock;
+                case SyntaxKind.MultiLineCommentTrivia:
+                    return CommentStyle.MultiLineBlock;
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                     return CommentStyle.Documentation;
@@ -269,9 +270,48 @@ namespace Builders
             return node.WithLeadingTrivia(newList);
         }
 
-        public override SyntaxNode InsertComment(SyntaxNode node, int index, string comment, CommentStyle style = CommentStyle.SingleLineBlock)
+        public override SyntaxNode InsertComment(SyntaxNode node, int index, string comment, CommentStyle style)
         {
-            throw new NotImplementedException();
+            var count = GetCommentCount(node);
+            if (index >= count)
+            {
+                return AddComment(node, comment, style);
+            }
+
+            var span = GetCommentSpan(node, index);
+            var existingTrivia = node.GetLeadingTrivia();
+
+            var newComment = CreateComment(comment, style);
+            var newTrivia = SyntaxFactory.ParseLeadingTrivia(newComment.FullText);
+
+            if (newTrivia.Count > 0 && !IsEndOfLine(newTrivia, newTrivia.Count -1))
+            {
+                newTrivia = newTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
+            }
+
+            var start = span.Start;
+            if (start > 0 && IsEmptyLine(existingTrivia, start - 1))
+            {
+                // back up so the insert happens before the preceding empty line
+                start--;
+            }
+
+            if (start > 0 && !CanBeAdjacent(existingTrivia[start - 1].Kind(), newTrivia[0].Kind()))
+            {
+                newTrivia = newTrivia.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+            }
+
+            if (start < existingTrivia.Count && !CanBeAdjacent(newTrivia[0].Kind(), existingTrivia[start].Kind()))
+            {
+                newTrivia = newTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
+            }
+
+            return node.WithLeadingTrivia(existingTrivia.InsertRange(start, newTrivia));
+        }
+
+        private static bool CanBeAdjacent(SyntaxKind commentKind1, SyntaxKind commentKind2)
+        {
+            return commentKind2 == SyntaxKind.EndOfLineTrivia;
         }
 
         public override SyntaxNode RemoveComment(SyntaxNode node, int index)

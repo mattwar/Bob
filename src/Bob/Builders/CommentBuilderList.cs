@@ -28,6 +28,15 @@ namespace Builders
             return newBuilder;
         }
 
+        public CommentBuilder InsertComment(int index, string comment, CommentStyle style = CommentStyle.SingleLineBlock)
+        {
+            var newNode = Editor.InsertComment(_nodeBuilder.CurrentNode, index, comment, style);
+            _nodeBuilder.UpdateCurrentNode(newNode);
+            var newBuilder = new CommentBuilder(this);
+            _list.Insert(index, newBuilder);
+            return newBuilder;
+        }
+
         public void Remove(CommentBuilder builder)
         {
             throw new NotImplementedException();
